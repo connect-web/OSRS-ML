@@ -8,4 +8,9 @@ from Entities.helpers.Calculator import LevelCalculator
 from Entities.helpers.sampling import undersample
 from Entities.helpers.SkillMod import DF_Skill_Ratio, DF_Levels
 
+from Entities.helpers.SkillModAgg import DF_Skill_Ratio as Advanced_DF_Skill_Ratio
+from Entities.helpers.SkillModAgg import DF_Levels as Advanced_DF_Levels
+
+
+
 calculator = LevelCalculator()
