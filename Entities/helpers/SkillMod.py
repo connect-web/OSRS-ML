@@ -1,5 +1,5 @@
 from copy import deepcopy
-from Entities import LevelCalculator
+from Entities.helpers.Calculator import LevelCalculator
 from Entities.helpers.Leaderboards import get_skill_names
 calculator = LevelCalculator()
 
