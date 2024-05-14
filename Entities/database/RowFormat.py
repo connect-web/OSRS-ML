@@ -2,6 +2,10 @@ from Entities.helpers.Leaderboards import get_skill_names, get_minigames_names, 
 
 
 class RowFormat:
+    """
+    Formats rows into a DataFrame suitable for models and further analysis.
+
+    """
     def __init__(self):
         self.columns = self.get_columns()
 
