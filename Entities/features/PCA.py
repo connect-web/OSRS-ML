@@ -57,8 +57,8 @@ class Pca:
 
     def plot(self):
         """
-        Plots the PCA
-        :return:
+        Plots the first two components of the PCA.
+        :return: None
         """
         # Prepare colors - adjust the number of unique labels if needed
         unique_labels = np.unique(self.y)
@@ -76,6 +76,12 @@ class Pca:
         plt.show()
 
     def plot_interactive(self, activity=None):
+        """
+        Plots an interactive PCA graph with pid's included in points to recognise patterns in the data.
+
+        :param activity: The activity column from the dataframe being plotted.
+        :return: None
+        """
         # Assuming self.X_r has been computed with n_components at least 2
         # Create a DataFrame for the PCA results
         pca_df = pd.DataFrame(data=self.X_r, columns=[f'PC{i + 1}' for i in range(self.X_r.shape[1])])
@@ -104,6 +110,11 @@ class Pca:
         return pca_df
 
     def plot_interactive_3d(self):
+        """
+        Plots an interactive 3d scatter plot of the top 3 PCA components
+
+        :return: None
+        """
         pca_df = pd.DataFrame(data=self.X_r, columns=[f'PC{i + 1}' for i in range(self.X_r.shape[1])])
         pca_df['Banned'] = self.y
         pca_df['pid'] = self.df['pid'] if 'pid' in self.df.columns else 'PID not available'
@@ -114,6 +125,11 @@ class Pca:
         fig.show()
 
     def elbow_plot(self):
+        """
+        Plots an elbow graph to visualize the optimal number of components to capture important features.
+
+        :return: None
+        """
         explained_variances = self.pca.explained_variance_ratio_
         cumulative_variances = np.cumsum(explained_variances)
 
