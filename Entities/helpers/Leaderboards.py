@@ -2,6 +2,13 @@ from dataclasses import dataclass
 
 
 def SkillToArray(user_skills, ratio=False):
+    """
+    Converts a dictionary of skills into a correctly padded array where values are not in the dictionary.
+
+    :param user_skills: (dict) A dictionary of user skills.
+    :param ratio: (bool, optional) Whether to return the ratio array instead of experience.
+    :return: (array) The skills array.
+    """
     skills = [
         user_skills.get(skill, 0)
         for skill in Leaderboards.Skills
@@ -29,6 +36,13 @@ def SkillToCombatArray(user_skills, ratio=False):
     return [skill/total if skill != 0 else 0 for skill in skills]
 
 def MinigameToArray(user_minigames, ratio=False):
+    """
+    Converts a dictionary of minigames into a correctly padded array where values are not in the dictionary.
+
+    :param user_minigames: (dict) A dictionary of user minigames & bosses.
+    :param ratio: (bool, optional) Whether to return the ratio array instead of experience.
+    :return: (array) The minigames array.
+    """
     minigames = [
             user_minigames.get(minigame, 0)
             for minigame in Leaderboards.Minigames
@@ -46,17 +60,29 @@ class Combat:
     }
 
 def get_skill_names(keep_overall=False):
+    """
+    Get the list of skill names.
+    :param keep_overall: (bool, optional) Whether to include the 'Overall' skill in the array.
+    :return: (array) The total list of skills.
+    """
     skills = list(Leaderboards.Skills.keys())
 
     if 'Overall' in skills and keep_overall ==False:
         skills.remove('Overall')
     return skills
 def get_minigames_names():
+    """
+    Get the list of minigame names.
+    :return: (array) The total list of minigames.
+    """
     Minigames = list(Leaderboards.Minigames.keys())
     return Minigames
 
 
 class Leaderboards:
+    """
+    Contains dictionaries of the Skills, Minigames as referenced by the Old school Runescape Hiscores.
+    """
     Skills = {
         'Overall': '0' , 'Attack': '1' , 'Defence': '2' , 'Strength': '3' , 'Hitpoints': '4' , 'Ranged': '5' ,
         'Prayer': '6' , 'Magic': '7' , 'Cooking': '8' , 'Woodcutting': '9' , 'Fletching': '10' , 'Fishing': '11' ,
@@ -94,14 +120,12 @@ class Leaderboards:
     # League points table is empty but actually does exist. Possible that it was just reset after the leagues or something...
     @staticmethod
     def getTableId (name , Skill = True):
+        """
+        returns the table id used in requests to get users from a Hiscore of the input skill/minigame.
+
+        :param name: The name of the skill/minigame.
+        :param Skill: (bool, optional) Whether the name is of a skill. Default is True.
+        :return:
+        """
         return Leaderboards.Skills.get(name) if Skill \
             else Leaderboards.Minigames.get(name)
-
-@dataclass
-class NameFilter:
-    Skills : dict = None
-    Minigames : dict = None
-
-    def __post_init__(self):
-        if self.Skills is None: self.Skills = Leaderboards.Skills
-        if self.Minigames is None: self.Minigames = Leaderboards.Minigames
