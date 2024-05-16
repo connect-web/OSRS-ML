@@ -28,7 +28,7 @@ class Plot:
         plt.ylabel(f'{self.model_name} Component 2')
         plt.show()
 
-    def plot_interactive(self, activity=None, x_range=None, y_range=None):
+    def plot_interactive(self, activity=None, x_range=None, y_range=None, return_df = False):
         """
         Plots an interactive PCA graph with pid's included in points to recognise patterns in the data.
 
@@ -66,7 +66,8 @@ class Plot:
             fig.update_yaxes(range=y_range)
 
         fig.show()
-        return pca_df
+        if return_df:
+            return pca_df
 
     def kmeans_cluster(self, n_clusters):
         """
