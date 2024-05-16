@@ -10,8 +10,8 @@ from .helpers import (
     HiscoreDf, export_usernames, export_dataframe
 )
 
-from .preprocessing import (
-    Pca, PcaAgg
+from .analysis import (
+    Pca, Tsne
 )
 
 from .preprocessing import (
