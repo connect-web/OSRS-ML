@@ -9,6 +9,12 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 
 class DataBalancer:
+    smote_options = {
+        'regular': SMOTE(random_state=42),
+        'borderline': BorderlineSMOTE(random_state=42),
+        'svm': SVMSMOTE(random_state=42),
+        'kmeans': KMeansSMOTE(random_state=42)
+    }
     def __init__(self, df, target_column='Banned'):
         self.df = df
         self.target_column = target_column
@@ -23,29 +29,14 @@ class DataBalancer:
         :param variant: The type of SMOTE variant to apply. Options are ['regular', 'borderline', 'svm', 'kmeans'].
         :return: The balanced DataFrame.
         """
-        smote_options = {
-            'regular': SMOTE(random_state=42),
-            'borderline': BorderlineSMOTE(random_state=42),
-            'svm': SVMSMOTE(random_state=42),
-            'kmeans': KMeansSMOTE(random_state=42)
-        }
-        smote = smote_options.get(variant, SMOTE(random_state=42))
+
+        smote = self.smote_options.get(variant, SMOTE(random_state=42))
         X_res, y_res = smote.fit_resample(self.features, self.labels)
 
+        # Ensure all values are non-negative
+        X_res = np.where(X_res < 0, 0, X_res)
 
         self.balanced_df = pd.DataFrame(np.c_[X_res, y_res], columns=list(self.features.columns) + [self.target_column])
-        """
-        
-        # Create a DataFrame from the resampled data
-        resampled_df = pd.DataFrame(X_res, columns=self.features.columns)
-        resampled_df[self.target_column] = y_res
-
-        # Option to append to the existing DataFrame (uncomment the following line to activate)
-        self.df = pd.concat([self.df, resampled_df]).reset_index(drop=True)
-
-        # Set the balanced DataFrame as the resampled data
-        self.balanced_df = resampled_df
-        """
         print(f"Resampling complete using {variant} variant. Balanced data size: {len(self.balanced_df)} rows.")
 
 
