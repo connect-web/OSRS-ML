@@ -11,11 +11,11 @@ from .helpers import (
 )
 
 from .analysis import (
-    Pca, Tsne
+    Pca, Tsne, Umap
 )
 
 from .preprocessing import (
     Leaderboards, skill_to_array, skill_to_combat_array, minigame_to_array, Combat,
     undersample, df_skill_ratio_basic, df_levels_basic, df_skill_ratio_advanced, df_levels_advanced,
-    LevelCalculator, calculator
+    LevelCalculator, calculator, DataBalancer
 )
