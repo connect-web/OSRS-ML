@@ -4,6 +4,5 @@ from .leaderboards import (
 from .sampling import undersample
 from .skill_converter import (df_skill_ratio_basic, df_levels_basic, df_levels_advanced, df_skill_ratio_advanced)
 from .level_calculator import LevelCalculator, calculator
+from .scaling import stats_scaling
 
-
-from .pca import (Pca, PcaAgg)
