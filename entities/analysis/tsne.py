@@ -1,14 +1,9 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 from sklearn.manifold import TSNE
-import plotly.express as px
-from sklearn.cluster import KMeans
 
 from entities.preprocessing.scaling import stats_scaling
+from .plotting import Plot
 
-class Tsne:
+class Tsne(Plot):
     def __init__(self, df, n_components=2, perplexity=30, n_iter=3000, **kwargs):
         """
         Initializes the Tsne class.
@@ -19,6 +14,8 @@ class Tsne:
         :param n_iter: The number of iterations for optimization.
         :param **kwargs: Arbitrary keyword arguments representing groups of features to be used in t-SNE.
         """
+        super().__init__(df, n_components, **kwargs)
+        self.model_name = 't-SNE'
         self.df = df
         self.n_components = n_components
         self.perplexity = perplexity
@@ -35,33 +32,3 @@ class Tsne:
         Runs t-SNE on the scaled data.
         """
         self.X_r = self.tsne.fit_transform(self.X_scaled)
-
-    def plot(self):
-        """
-        Plots the t-SNE results.
-        """
-        plt.figure(figsize=(10, 8))
-        colors = cm.rainbow(np.linspace(0, 1, len(np.unique(self.y))))
-        for color, label in zip(colors, np.unique(self.y)):
-            plt.scatter(self.X_r[self.y == label, 0], self.X_r[self.y == label, 1], color=color, label=label, alpha=0.5)
-
-        plt.legend()
-        plt.title('t-SNE Scatter Plot')
-        plt.xlabel('t-SNE Component 1')
-        plt.ylabel('t-SNE Component 2')
-        plt.show()
-
-    def plot_interactive(self):
-        """
-        Plots an interactive scatter plot of the t-SNE results.
-        """
-        tsne_df = pd.DataFrame(data=self.X_r, columns=['t-SNE Component 1', 't-SNE Component 2'])
-        tsne_df['Banned'] = self.y
-        tsne_df['pid'] = self.df['pid']
-
-        fig = px.scatter(tsne_df, x='t-SNE Component 1', y='t-SNE Component 2', color='Banned',
-                         title='Interactive t-SNE Plot', hover_data=[self.df.columns[0]])
-        fig.update_traces(marker=dict(size=5))
-        fig.update_layout(template="plotly_dark")
-        fig.show()
-
