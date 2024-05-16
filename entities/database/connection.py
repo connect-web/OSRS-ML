@@ -1,10 +1,7 @@
 import os
-
 import pandas as pd
 import psycopg2
-from psycopg2.extras import Json
 import time
-from time import sleep
 import random
 random.seed(time.time())
 
