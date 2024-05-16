@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 from sklearn.preprocessing import StandardScaler
 import plotly.express as px
 from sklearn.cluster import KMeans
-class BasePca:
+class Pca:
     print_variance = False
 
     def __init__(self, df, skills, minigames = None, n_components=None):
@@ -183,11 +183,7 @@ class BasePca:
         fig.update_layout(template="plotly_dark")
         fig.show()
 
-class Pca(BasePca):
-    def __init__(self, df, skills, minigames=None, n_components=None):
-        super().__init__(df, skills, minigames, n_components)
-
-class PcaAgg(BasePca):
+class PcaAgg(Pca):
     def __init__(self, df, skills, skills_agg, minigames=None, minigames_agg=None, extra_features=None,
                  n_components=None):
         """

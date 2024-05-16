@@ -4,12 +4,14 @@ from .database import (
     get_skill_aggregate_hiscore
 )
 
-from .features import (
-    Pca, PcaAgg
-)
+
 
 from .helpers import (
     HiscoreDf, export_usernames, export_dataframe
+)
+
+from .preprocessing import (
+    Pca, PcaAgg
 )
 
 from .preprocessing import (
