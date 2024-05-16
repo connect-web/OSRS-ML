@@ -1,17 +1,119 @@
 import pandas as pd
+import numpy as np
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+from imblearn.over_sampling import SMOTE, BorderlineSMOTE, SVMSMOTE, KMeansSMOTE
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+
+class DataBalancer:
+    def __init__(self, df, target_column='Banned'):
+        self.df = df
+        self.target_column = target_column
+        self.features = df.drop(columns=[target_column])
+        self.labels = df[target_column]
+        self.model = RandomForestClassifier(random_state=42)
+
+    def apply_smote(self, variant='regular'):
+        """
+        Applies SMOTE to oversample the minority class and constructs the DataFrame in one go to avoid fragmentation.
+
+        :param variant: The type of SMOTE variant to apply. Options are ['regular', 'borderline', 'svm', 'kmeans'].
+        :return: The balanced DataFrame.
+        """
+        smote_options = {
+            'regular': SMOTE(random_state=42),
+            'borderline': BorderlineSMOTE(random_state=42),
+            'svm': SVMSMOTE(random_state=42),
+            'kmeans': KMeansSMOTE(random_state=42)
+        }
+        smote = smote_options.get(variant, SMOTE(random_state=42))
+        X_res, y_res = smote.fit_resample(self.features, self.labels)
+
+
+        self.balanced_df = pd.DataFrame(np.c_[X_res, y_res], columns=list(self.features.columns) + [self.target_column])
+        """
+        
+        # Create a DataFrame from the resampled data
+        resampled_df = pd.DataFrame(X_res, columns=self.features.columns)
+        resampled_df[self.target_column] = y_res
+
+        # Option to append to the existing DataFrame (uncomment the following line to activate)
+        self.df = pd.concat([self.df, resampled_df]).reset_index(drop=True)
+
+        # Set the balanced DataFrame as the resampled data
+        self.balanced_df = resampled_df
+        """
+        print(f"Resampling complete using {variant} variant. Balanced data size: {len(self.balanced_df)} rows.")
+
+
+        return self.balanced_df
+
+    def perform_cross_validation(self, cv=5):
+        """
+        Performs cross-validation on the dataset and returns classification reports for each fold.
+
+        :param cv: number of cross-validation folds to use.
+        :return: a list of tuples containing the cross-validation predictions coupled with the real target values.
+        """
+        skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
+        results = []
+
+        for train_index, test_index in skf.split(self.df.drop(columns=[self.target_column]),
+                                                 self.df[self.target_column]):
+            X_train, X_test = self.df.iloc[train_index].drop(columns=[self.target_column]), self.df.iloc[
+                test_index].drop(columns=[self.target_column])
+            y_train, y_test = self.df.iloc[train_index][self.target_column], self.df.iloc[test_index][
+                self.target_column]
+
+            self.model.fit(X_train, y_train)
+            predictions = self.model.predict(X_test)
+            results.append((y_test, predictions))
+
+        return results
+
+    def evaluate_cross_validation(self, results):
+        """
+        Evaluates the cross-validation results and prints the classification report and confusion matrix for each fold.
+        """
+        for i, (y_test, predictions) in enumerate(results, 1):
+            print(f"Results for fold {i}")
+            print(classification_report(y_test, predictions))
+            cm = confusion_matrix(y_test, predictions)
+            sns.heatmap(cm, annot=True, fmt="d")
+            plt.title('Confusion Matrix')
+            plt.ylabel('Actual Labels')
+            plt.xlabel('Predicted Labels')
+            plt.show()
+
+    def visualize_balancing_effect(self):
+        """
+        Visualize the effect of balancing by comparing label distributions before and after.
+        """
+        fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+        sns.countplot(x=self.labels, ax=ax[0])
+        ax[0].set_title('Original Data Distribution')
+        ax[0].set_xlabel('Class')
+        ax[0].set_ylabel('Frequency')
+
+        sns.countplot(x=self.df[self.target_column], ax=ax[1])
+        ax[1].set_title('Balanced Data Distribution')
+        ax[1].set_xlabel('Class')
+        ax[1].set_ylabel('Frequency')
+
+        plt.show()
 
 
 def undersample(df):
     """
     Undersamples the majority class in a dataframe based on the specified limit.
 
-    Parameters:
-        df (DataFrame): The input DataFrame.
-        banned_type (str): The column name indicating the class (e.g., 'Banned').
-        limit (int): The maximum number of samples for the majority class after undersampling.
+    This is a poor performance method to undersample the majority class randomly.
 
-    Returns:
-        DataFrame: A DataFrame where the majority class has been undersampled.
+    :param df: Dataframe to undersample
+    :return: Dataframe with majority class under sampled.
     """
     # Split the DataFrame into majority and minority classes
     df_a = df[df['Banned'] == 0]
