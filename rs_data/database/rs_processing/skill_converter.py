@@ -1,13 +1,7 @@
 from copy import deepcopy
 
-from .leaderboards import Leaderboards
-from .level_calculator import LevelCalculator
-
-from .row_format import RowFormatAdvanced
-
-
-calculator = LevelCalculator()
-row_format = RowFormatAdvanced()
+from .leaderboards import Leaderboards, rename_player_live, rename_aggregate
+from .level_calculator import calculator
 
 def calculate_overall(df, skills, type=None):
     """
@@ -33,7 +27,7 @@ def df_levels(df, type=None):
     """
     df_levels = deepcopy(df)
     skills = Leaderboards.get_skill_names()
-    skills_to_use = skills if type is None else row_format.player_live(skills) if type == 'live' else row_format.aggregate(skills)
+    skills_to_use = skills if type is None else rename_player_live(skills) if type == 'live' else rename_aggregate(skills)
 
     # Calculate Overall in case it is zero on hiscores.
     df_levels = calculate_overall(df_levels, skills_to_use, type)
@@ -50,10 +44,8 @@ def df_skill_ratio(df, type=None):
     :return: DataFrame with skill ratios.
     """
     df_ratios = deepcopy(df)
-
+    skills = Leaderboards.get_skill_names()
     if type is None:
-        skills = Leaderboards.get_skill_names()
-
         df_ratios = calculate_overall(df_ratios, skills)
 
         for skill in skills:
@@ -61,8 +53,8 @@ def df_skill_ratio(df, type=None):
 
         df_ratios['Overall'] /= 200_000_000  # formatting the Overall XP as ratio of the maximum.
     else:
-        live_skills = row_format.player_live(skills)
-        aggregate_skills = row_format.aggregate(skills)
+        live_skills = rename_player_live(skills)
+        aggregate_skills = rename_aggregate(skills)
 
         # Calculate Overall in case it is zero on hiscores.
         df_ratios = calculate_overall(df_ratios, live_skills, 'live')
@@ -77,9 +69,6 @@ def df_skill_ratio(df, type=None):
             df_ratios[agg_skill] = df_ratios[agg_skill] / df_ratios['Overall_aggregate']
 
         df_ratios['Overall_live'] /= 200_000_000  # formatting the Overall XP as ratio of the maximum.
-
-
-
 
     return df_ratios
 

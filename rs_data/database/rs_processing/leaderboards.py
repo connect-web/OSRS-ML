@@ -1,3 +1,9 @@
+def rename_player_live(names):
+    return [f'{name}_live' for name in names]
+
+def rename_aggregate(names):
+    return [f'{name}_aggregate' for name in names]
+
 class Leaderboards:
     """
     Contains dictionaries of the Skills, Minigames as referenced by the Old school Runescape Hiscores.

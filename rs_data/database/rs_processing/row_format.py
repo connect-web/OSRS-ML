@@ -1,5 +1,5 @@
-from entities.preprocessing.leaderboards import (
-    Leaderboards, skill_to_array, minigame_to_array
+from .leaderboards import (
+    Leaderboards, skill_to_array, minigame_to_array, rename_aggregate, rename_player_live
 )
 
 class RowFormatBase:
@@ -54,11 +54,11 @@ class RowFormatAdvanced(RowFormatBase):
         self.skills = Leaderboards.get_skill_names(keep_overall=True)
         self.minigames = Leaderboards.get_minigame_names()
 
-        self.live_skills = self.player_live(self.skills)
-        self.live_minigames = self.player_live(self.minigames)
+        self.live_skills = rename_player_live(self.skills)
+        self.live_minigames = rename_player_live(self.minigames)
 
-        self.agg_skills = self.aggregate(self.skills)
-        self.agg_minigames = self.aggregate(self.minigames)
+        self.agg_skills = rename_aggregate(self.skills)
+        self.agg_minigames = rename_aggregate(self.minigames)
 
         live_stats = self.live_skills + self.live_minigames
         aggregated_stat_gains = self.agg_skills + self.agg_minigames
