@@ -2,7 +2,7 @@ from .base_transformer import BaseTransformation
 from sklearn.manifold import TSNE as SklearnTSNE
 
 class TSNE(BaseTransformation):
-    def __init__(self, n_components=None, perplexity=30, n_iter=1000):
+    def __init__(self, n_components=None, perplexity=30, n_iter=1000, early_exaggeration=12.0):
         """
         Creates a t-SNE in a pipeline with methods to plot graphs.
 
@@ -15,7 +15,8 @@ class TSNE(BaseTransformation):
 
         self.perplexity = perplexity
         self.n_iter = n_iter
-        self.model = SklearnTSNE(n_components=n_components, perplexity=perplexity, n_iter=n_iter)
+        self.early_exaggeration = early_exaggeration
+        self.model = SklearnTSNE(n_components=n_components, perplexity=perplexity, n_iter=n_iter, early_exaggeration=early_exaggeration)
 
     def fit_transform(self, X, y=None):
         """
