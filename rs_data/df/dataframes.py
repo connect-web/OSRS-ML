@@ -6,7 +6,7 @@ from .enums import SkillType
 
 
 def get_dataframe(activity: str, limit: int, offset: int = 0, aggregate: bool = True,
-                  skill_type: SkillType = SkillType.EXPERIENCE):
+                  skill_type: SkillType = SkillType.EXPERIENCE, extra_features=True):
     """
     Fetches users from the Hiscore rankings for Q1 2024 in the order of activity experience DESC.
     Rows are then converted into a dataframe and the formatter object is returned with the column names
@@ -23,4 +23,8 @@ def get_dataframe(activity: str, limit: int, offset: int = 0, aggregate: bool = 
 
     # apply data processing
     df = skill_type.apply(df, aggregate)
+
+    if extra_features is False:
+        df = df.drop(columns=formatter.extra_features)
+
     return df, formatter
