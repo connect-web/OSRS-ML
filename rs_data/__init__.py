@@ -8,7 +8,7 @@ from .pipelines import (
 )
 
 from .pipelines import (
-    PCA, UMAP, TSNE
+    PCA, UMAP, TSNE, SMOTE
 )
 
 from .models import (
