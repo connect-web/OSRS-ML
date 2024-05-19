@@ -1,5 +1,8 @@
 from rs_data.database import (
-    get_skill_hiscore
+    get_skill_hiscore, get_minigame_hiscore
+)
+from rs_data.database.rs_processing import (
+    Leaderboards
 )
 
 from .enums import SkillType
@@ -19,7 +22,12 @@ def get_dataframe(activity: str, limit: int, offset: int = 0, aggregate: bool = 
     :param skill_type: The type of processing to apply on skills, either ['EXPERIENCE', 'LEVELS', 'RATIO']
     :return:
     """
-    df, formatter = get_skill_hiscore(activity, limit=limit, offset=offset, aggregate=aggregate)
+
+    if activity in Leaderboards.get_minigame_names():
+        print('fetching minigame!')
+        df, formatter = get_minigame_hiscore(activity, limit=limit, offset=offset, aggregate=aggregate)
+    else:
+        df, formatter = get_skill_hiscore(activity, limit=limit, offset=offset, aggregate=aggregate)
 
     # apply data processing
     df = skill_type.apply(df, aggregate)

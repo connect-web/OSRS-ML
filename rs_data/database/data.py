@@ -5,7 +5,7 @@ from .rs_processing import RowFormat, RowFormatAdvanced
 from .rs_processing.skill_converter import df_levels
 
 
-def get_skill_hiscore(activity, limit=500, offset=0, aggregate=False):
+def get_hiscore(activity, limit=500, offset=0, aggregate=False, activity_type='skills'):
     db = Connection(localhost=True)
 
     if aggregate:
@@ -14,7 +14,7 @@ def get_skill_hiscore(activity, limit=500, offset=0, aggregate=False):
             'shortestinactivity', 'shortestactivity',
             'longestinactivity', 'longestactivity'
         ]
-        query = '''
+        query = f'''
         SELECT agg.pid, CASE WHEN nf.pid IS NULL THEN FALSE ELSE TRUE END as not_found,
             pl.skills, pl.minigames, agg.skills, agg.minigames,
             agg.updates, agg.activescrapes, agg.inactivescrapes,
@@ -23,20 +23,21 @@ def get_skill_hiscore(activity, limit=500, offset=0, aggregate=False):
         FROM TASKS.aggregates agg
         LEFT JOIN player_live pl on pl.pid = agg.pid
         LEFT JOIN not_found nf on agg.pid = nf.pid
-        WHERE agg.HASNEGATIVE IS FALSE AND (agg.skills ->> %s)::numeric IS NOT NULL
-        ORDER BY (agg.skills ->> %s)::numeric DESC
+        WHERE agg.HASNEGATIVE IS FALSE 
+        AND (agg.{activity_type} ->> %s)::numeric IS NOT NULL
+        ORDER BY (agg.{activity_type} ->> %s)::numeric DESC
         LIMIT %s OFFSET %s
         '''
         formatter = RowFormatAdvanced(extra_features=extra_features)
     else:
-        query = '''
+        query = f'''
         SELECT agg.pid, CASE WHEN nf.pid IS NULL THEN FALSE ELSE TRUE END as not_found,
             pl.skills, pl.minigames
         FROM TASKS.aggregates agg
         LEFT JOIN player_live pl on pl.pid = agg.pid
         LEFT JOIN not_found nf on agg.pid = nf.pid
-        WHERE (agg.skills ->> %s)::numeric IS NOT NULL
-        ORDER BY (agg.skills ->> %s)::numeric DESC
+        WHERE (agg.{activity_type} ->> %s)::numeric IS NOT NULL
+        ORDER BY (agg.{activity_type} ->> %s)::numeric DESC
         LIMIT %s OFFSET %s
         '''
         formatter = RowFormat()
@@ -51,6 +52,14 @@ def get_skill_hiscore(activity, limit=500, offset=0, aggregate=False):
 
     df = pd.DataFrame(rows, columns=formatter.get_columns())
     return df, formatter
+
+
+def get_skill_hiscore(activity, limit=500, offset=0, aggregate=False):
+    return get_hiscore(activity, limit=limit, offset=offset, aggregate=aggregate, activity_type='skills')
+
+def get_minigame_hiscore(activity, limit=500, offset=0, aggregate=False):
+    return get_hiscore(activity, limit=limit, offset=offset, aggregate=aggregate, activity_type='minigames')
+
 
 
 def get_players(pids: list[int]) -> pd.DataFrame:
