@@ -20,10 +20,10 @@ def get_training_data(activity):
     X, y, _ = get_data(activity, limit=1000, offset=0)
     return X, y
 
-def get_model(activity):
+def get_model(activity, minigame=False):
     # Specify the model name and the stage
-    model_name = f"{activity} + extra features"
-    version = 2  # Specify the version number
+    model_name = f"{activity}{' ' if minigame else ''} + extra features"
+    version = 1 if minigame else 2  # Specify the version number
 
     # Construct the model URI
     model_uri = f"models:/{model_name}/{version}"
@@ -37,32 +37,38 @@ def get_model(activity):
     return model
 
 
-def find_and_save_results(activity):
-    X, y, pids = get_data(activity)
-    model = get_model(activity)
-    y_pred = model.predict(X)
+def find_and_save_results(activity, limit=10_000, minigame = False):
+    try:
 
-    y_pred = pd.DataFrame(y_pred, columns=['Ban Prediction'])
-    df_pred = pd.concat([y, y_pred, pids], axis=1)
+        X, y, pids = get_data(activity, limit=limit)
+        print(f'Running inference on {len(X)} users for {activity}.')
+        model = get_model(activity, minigame=minigame)
+        y_pred = model.predict(X)
 
-    bot_users = df_pred[(df_pred['Banned'] == False) & (df_pred['Ban Prediction'] == True)]
-    banned_bot_users = df_pred[(df_pred['Banned'] == True) & (df_pred['Ban Prediction'] == True)]
+        y_pred = pd.DataFrame(y_pred, columns=['Ban Prediction'])
+        df_pred = pd.concat([y, y_pred, pids], axis=1)
 
-    stats = {
-        "Activity": activity,
-        'Unbanned': len(bot_users),
-        'Banned': len(banned_bot_users),
-    }
+        bot_users = df_pred[(df_pred['Banned'] == False) & (df_pred['Ban Prediction'] == True)]
+        banned_bot_users = df_pred[(df_pred['Banned'] == True) & (df_pred['Ban Prediction'] == True)]
 
-    pids = bot_users['pid'].tolist()
-    players_df = get_players(pids)
+        stats = {
+            "Activity": activity,
+            'Unbanned': len(bot_users),
+            'Banned': len(banned_bot_users),
+        }
 
-    export_usernames(activity=activity,
-                     filename="Top 10K Users Q1 2024",
-                     usernames=players_df['Name'].tolist(),
-                     directory="../../../"
-                     )
+        pids = bot_users['pid'].tolist()
+        players_df = get_players(pids)
 
-    return stats
+        export_usernames(activity=activity,
+                         filename="Top 10K Users Q1 2024",
+                         usernames=players_df['Name'].tolist(),
+                         directory="../../../"
+                         )
+
+        return stats
+    except Exception as e:
+        print(e)
+        return {}
 
 
