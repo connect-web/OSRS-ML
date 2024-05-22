@@ -6,7 +6,7 @@ The effect of this is that similar accounts are grouped together therefore the o
 I have chosen this specific type of model to focus mainly on the task of determining with the highest possible accuracy whether a user is a bot.
 
 # Model metrics
-The model metrics can be seen in the [View]('/notebooks/mlflow/experiments/view.ipynb')
+The model metrics can be seen in the [View](/notebooks/mlflow/experiments/view.ipynb)
 
 - As of right now Mlflow has been run roughly 75 times per Activity across 200+ total activities and will be completing many more runs to grid search and find the best cross validation results across multiple models and hyperparameters.
   - For this reason the model statistics will be stored in the View notebook since they will be changing often.
