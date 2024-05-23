@@ -12,7 +12,3 @@ from .pipelines import (
 from .pipelines import (
     PCA, UMAP, TSNE, SMOTE
 )
-
-from .models import (
-    evaluate_model
-)
