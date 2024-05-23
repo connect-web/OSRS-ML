@@ -20,21 +20,43 @@ from rs_data import (PCA, TSNE, UMAP)
 from rs_data.database.rs_processing import Leaderboards
 
 
+whitelisted_activity_list = [
+'Artio', 'Barrows Chests', 'Callisto', "Calvar'ion", 'Rifts closed', 'Soul Wars Zeal',
+'Crazy Archaeologist', 'Dagannoth Prime', 'Dagannoth Rex', 'Dagannoth Supreme',
+'Chambers of Xeric', 'Chambers of Xeric: Challenge Mode','Chaos Elemental', 'Chaos Fanatic',
+'Commander Zilyana', 'Corporeal Beast', 'Deranged Archaeologist', 'Duke Sucellus',
+'General Graardor', 'Giant Mole', 'Hespori', 'King Black Dragon'
+, 'Kalphite Queen',
+
+"Kree'Arra", "K'ril Tsutsaroth", 'Mimic', 'Nex',
+'Nightmare', "Phosani's Nightmare", 'Phantom Muspah','Scorpia', 'Skotizo', 'Spindel'
+,'Tempoross', 'Theatre of Blood', 'Theatre of Blood: Hard Mode','Venenatis',
+"Vet'ion", 'Vorkath', 'Wintertodt', 'Zalcano', 'Zulrah'
+
+]
+
 class MinigameExperiments:
     user_limit = 1000
     skill_type = SkillType.EXPERIENCE
     def __init__(self, N_JOBS = -1):
-        self.completed_acitivties = []
+        self.completed_acitivties = [
+            'Bounty Hunter - Hunter',
+            'Bounty Hunter - Rogue',
+        ]
         activities = Leaderboards.get_minigame_names()
+
         self.activities = [activity for activity in activities if activity not in self.completed_acitivties]
+        self.activities = whitelisted_activity_list
+
         print(f'You have {len(self.activities)} activities to complete!')
 
         # Configure MLflow to connect to your local server
         mlflow.set_tracking_uri("http://localhost:5000")
         self.cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         self.pca_components = [
-            6, 10, 20, 30, 40, 50, 60, 80, 100, 125, 150
+            10, 20, 30, 40, 50, 60, 80, 100, 125
         ]
+        [6, 150]
         self.classifiers = [
             ("RandomForest", RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=N_JOBS)),
             ("ExtraTrees", ExtraTreesClassifier(n_estimators=100, random_state=42, n_jobs=N_JOBS)),
@@ -80,6 +102,11 @@ class MinigameExperiments:
             f"{activity} {self.skill_type.description} Model comparison for {self.user_limit} users")
 
         X, y, preprocessor = self.get_data(activity)
+
+        print(f'loaded {len(X)} users for {activity}')
+        if len(X) < 1000:
+            print(f"Skipping {activity} due to insufficient training data.")
+            return
 
         for pca_n_components in self.pca_components:
             for name, classifier in self.classifiers:
