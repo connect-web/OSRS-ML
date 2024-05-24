@@ -4,6 +4,18 @@ This project uses machine learning to identify users that are likely to be using
 
 ---
 
+## Contents
+- [Production Models - Version 1](#production-models---version-1)
+  - [Dataset](#dataset)
+  - [Features](#features)
+  - [Preprocessor](#preprocessor)
+  - [Sampling](#sampling)
+  - [Models](#models)
+  - [Pipeline](#pipeline)
+  - [Optimal Model: Performance Metrics](#optimal-model-performance-metrics)
+
+---
+
 
 # Production Models - Version 1
 
