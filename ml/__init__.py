@@ -10,3 +10,5 @@ from .api import (
 from .dataframes import get_best_roc_auc_experiments, get_model_metrics
 
 from .publish_experiments import publish_best_experiments
+
+from .grid_search import (GridSearchActivity, MLflowGridSearchCV)
