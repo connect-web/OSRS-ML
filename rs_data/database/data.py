@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .connection import Connection
-from .rs_processing import RowFormat, RowFormatAdvanced
+from .rs_processing import RowFormat, RowFormatAdvanced, EXTRA_FEATURES
 from .rs_processing.skill_converter import df_levels
 
 
@@ -9,11 +9,6 @@ def get_hiscore(activity, limit=500, offset=0, aggregate=False, activity_type='s
     db = Connection(localhost=True)
 
     if aggregate:
-        extra_features = [
-            'updates', 'activescrapes', 'inactivescrapes',
-            'shortestinactivity', 'shortestactivity',
-            'longestinactivity', 'longestactivity'
-        ]
         query = f'''
         SELECT agg.pid, CASE WHEN nf.pid IS NULL THEN FALSE ELSE TRUE END as not_found,
             pl.skills, pl.minigames, agg.skills, agg.minigames,
@@ -28,7 +23,7 @@ def get_hiscore(activity, limit=500, offset=0, aggregate=False, activity_type='s
         ORDER BY (agg.{activity_type} ->> %s)::numeric DESC
         LIMIT %s OFFSET %s
         '''
-        formatter = RowFormatAdvanced(extra_features=extra_features)
+        formatter = RowFormatAdvanced(extra_features=EXTRA_FEATURES)
     else:
         query = f'''
         SELECT agg.pid, CASE WHEN nf.pid IS NULL THEN FALSE ELSE TRUE END as not_found,
