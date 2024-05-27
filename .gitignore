@@ -2,3 +2,5 @@ mlruns
 *.xml
 *.iml
 *.pyc
+*.rar
+data
