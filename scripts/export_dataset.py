@@ -11,11 +11,15 @@ class ExportData:
     user_limit = 1000
 
     def __init__(self):
-        self.activities = ['Dagannoth Prime']  # Leaderboards.get_skill_names(keep_overall=True)
+        self.activities =  Leaderboards.get_skill_names(keep_overall=True) + Leaderboards.get_minigame_names()
         print(f'You have {len(self.activities)} activities to complete!')
 
     def export_dataset(self, activity):
         df, formatter = get_dataframe(activity, limit=self.user_limit, aggregate=True)
+
+        if len(df) < 1000:
+            print(f'{activity} has only {len(df)} users...')
+            return
 
         column_data = {
             'live': {'skills': formatter.live_skills, 'minigames': formatter.live_minigames},
