@@ -43,6 +43,8 @@ def get_best_roc_auc_experiments():
                 metrics_missing += 1
     df = pd.concat(best_scores).reset_index(drop=True)
 
+    df['params.PCA_n_components'] = df['params.PCA_n_components'].astype(int)
+
     print(f'You have {len(df)} valid experiments & {invalid_experiments} invalid experiments & {metrics_missing} metrics were missing.')
     return df
 
