@@ -2,6 +2,12 @@ from .leaderboards import (
     Leaderboards, skill_to_array, minigame_to_array, rename_aggregate, rename_player_live
 )
 
+EXTRA_FEATURES = [
+            'updates', 'activescrapes', 'inactivescrapes',
+            'shortestinactivity', 'shortestactivity',
+            'longestinactivity', 'longestactivity'
+        ]
+
 class RowFormatBase:
     """
     Base class for formatting rows into a DataFrame suitable for models and further analysis.
