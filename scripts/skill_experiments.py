@@ -49,8 +49,7 @@ class SkillExperiments:
     def create_experiments(self):
         for activity in self.activities:
             try:
-                mlflow.set_experiment(
-                    f"{activity} {self.skill_type.description} Model comparison for {self.user_limit} users")  # Set your experiment name
+                mlflow.set_experiment(activity)  # Set your experiment name
             except:
                 print(f"Created {activity} experiment")
 
@@ -75,8 +74,7 @@ class SkillExperiments:
             self.run_activity(activity)
 
     def run_activity(self, activity):
-        mlflow.set_experiment(
-            f"{activity} {self.skill_type.description} Model comparison for {self.user_limit} users")
+        mlflow.set_experiment(activity)
 
         X, y, preprocessor = self.get_data(activity)
 
