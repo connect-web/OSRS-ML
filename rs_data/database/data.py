@@ -83,3 +83,21 @@ def get_players(pids: list[int]) -> pd.DataFrame:
 
     df['Overall'] = df['Overall'].apply(lambda x: f"{x / 1_000_000:.2f}M")
     return df
+
+
+def get_bans(pids: list[int]) -> pd.DataFrame:
+    query = '''
+    SELECT
+        p.id as pid,
+        CASE WHEN BAN.player_id IS NULL THEN FALSE ELSE TRUE END as Banned
+    from players p
+    LEFT JOIN statistics.confirmed_bans ban on ban.player_id = p.id
+    WHERE p.id = any(%s)
+    '''
+
+    db = Connection(localhost=True)
+    df = db.get_df(query, params=(pids,), columns=['pid', 'Banned'])
+
+    # Only return the df where ban's are true
+
+    return df[df['Banned'] == True]
