@@ -6,6 +6,7 @@ from sklearn.model_selection import GridSearchCV
 import itertools
 
 from rs_data import (PCA, TSNE, UMAP)
+from rs_data.database.data import get_bans
 
 from mlflow.tracking import MlflowClient
 mlflow.set_tracking_uri("http://localhost:5000")
@@ -17,7 +18,7 @@ from .models import GridModels
 from .mlflow_gridsearch import MLflowGridSearchCV
 
 class GridSearchActivity(GridModels):
-    def __init__(self, activity : str, classifier_name: str, n_components : int, param_space: dict = None, n_folds: int = 5):
+    def __init__(self, activity : str, classifier_name: str, n_components : int, param_space: dict = None, n_folds: int = 5, new_ban_data: bool = False):
         """
         Loads training data for target activity then completes a grid search on the best available model.
 
@@ -31,6 +32,7 @@ class GridSearchActivity(GridModels):
         self.n_components = n_components
         self.param_space = param_space
         self.n_folds = n_folds
+        self.new_ban_data = new_ban_data
 
         self.classifier = None
 
@@ -65,6 +67,21 @@ class GridSearchActivity(GridModels):
             raise Exception(f"The classifier was not setup.")
 
         df , preprocessor = load_set(self.activity, directory='./')
+
+        if self.new_ban_data:
+            ban_count = len(df[df['Banned'] == True])
+            unbanned_count = len(df[df['Banned'] == False])
+            print(f'{ban_count} bans + {unbanned_count} unbans turned into....')
+            ban_df = get_bans(df['pid'].tolist())
+
+            mask = df['pid'].isin(ban_df['pid'])
+            df.loc[mask, 'Banned'] = ban_df.set_index('pid').loc[df.loc[mask, 'pid'], 'Banned'].values
+
+            ban_count = len(df[df['Banned'] == True])
+            unbanned_count = len(df[df['Banned'] == False])
+            print(f'{ban_count} bans + {unbanned_count} unbans turned into....')
+
+
 
         X = df.drop(columns=['Banned', 'pid'])
         y = df['Banned']
