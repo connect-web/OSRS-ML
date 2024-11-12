@@ -6,16 +6,33 @@ This project uses machine learning to identify users that are likely to be using
 
 ## Contents
 - [Production Models - Version 1](#production-models---version-1)
+  - [Optimal Model: Performance Metrics](#optimal-model-performance-metrics)
   - [Dataset](#dataset)
   - [Features](#features)
   - [Preprocessor](#preprocessor)
   - [Sampling](#sampling)
   - [Models](#models)
   - [Pipeline](#pipeline)
-  - [Optimal Model: Performance Metrics](#optimal-model-performance-metrics)
+  
 
 ---
 
+### Optimal Model: Performance Metrics
+
+| name                    | version | ROC-AUC  | Mean Accuracy | Recall Class 0 | Recall Class 1 | Accuracy Class 0 | Accuracy Class 1 |
+|-------------------------|---------|----------|---------------|----------------|----------------|------------------|------------------|
+| prod.Phantom Muspah     | 1       | 0.921394 | 0.929         | 0.947439       | 0.895349       | 0.934            | 0.934            |
+| prod.Runecraft          | 1       | 0.919547 | 0.934         | 0.945026       | 0.894068       | 0.933            | 0.933            |
+| prod.Artio              | 1       | 0.918723 | 0.928         | 0.933938       | 0.903509       | 0.927            | 0.927            |
+| prod.Corporeal Beast    | 1       | 0.915344 | 0.924         | 0.929699       | 0.900990       | 0.921            | 0.921            |
+| prod.Zulrah             | 1       | 0.911517 | 0.912         | 0.958781       | 0.864253       | 0.917            | 0.917            |
+| prod.Calvarion          | 1       | 0.897222 | 0.935         | 0.944444       | 0.850000       | 0.935            | 0.935            |
+| prod.Clue Scrolls (all) | 1       | 0.894737 | 0.906         | 0.909474       | 0.880000       | 0.908            | 0.908            |
+| ...                     | ...     | ...      | ...           | ...            | ...            | ...              | ...              |
+
+(Note: Only a subset of the data is shown here for brevity. Please refer to the csv below for complete details.)
+
+[**Metrics CSV - V1**](data/model_metrics/v1/model_metrics.csv)
 
 # Production Models - Version 1
 
@@ -96,21 +113,6 @@ pipeline = ImblearnPipeline([
 ])
 ```
 
-### Optimal Model: Performance Metrics
 
-| name                    | version | ROC-AUC  | Mean Accuracy | Recall Class 0 | Recall Class 1 | Accuracy Class 0 | Accuracy Class 1 |
-|-------------------------|---------|----------|---------------|----------------|----------------|------------------|------------------|
-| prod.Phantom Muspah     | 1       | 0.921394 | 0.929         | 0.947439       | 0.895349       | 0.934            | 0.934            |
-| prod.Runecraft          | 1       | 0.919547 | 0.934         | 0.945026       | 0.894068       | 0.933            | 0.933            |
-| prod.Artio              | 1       | 0.918723 | 0.928         | 0.933938       | 0.903509       | 0.927            | 0.927            |
-| prod.Corporeal Beast    | 1       | 0.915344 | 0.924         | 0.929699       | 0.900990       | 0.921            | 0.921            |
-| prod.Zulrah             | 1       | 0.911517 | 0.912         | 0.958781       | 0.864253       | 0.917            | 0.917            |
-| prod.Calvarion          | 1       | 0.897222 | 0.935         | 0.944444       | 0.850000       | 0.935            | 0.935            |
-| prod.Clue Scrolls (all) | 1       | 0.894737 | 0.906         | 0.909474       | 0.880000       | 0.908            | 0.908            |
-| ...                     | ...     | ...      | ...           | ...            | ...            | ...              | ...              |
-
-(Note: Only a subset of the data is shown here for brevity. Please refer to the csv below for complete details.)
-
-[**Metrics CSV - V1**](data/model_metrics/v1/model_metrics.csv)
 
 ---
